@@ -1,28 +1,16 @@
 const express = require("express");
+const router = express.Router();
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
-//Data
-let tasks = require("./tasks");
+//route
+const taskRoutes = require("./routes/tasks");
 
 //Express App Instance
 const app = express();
-
+app.use(bodyParser.json());
 app.use(cors());
-
-app.get("/tasks", (req, res) => {
-  res.json(tasks);
-});
-
-app.delete("/tasks/:taskId", (req, res) => {
-  const { taskId } = req.params;
-  const foundTask = tasks.find((task) => task.id !== +taskId);
-  if (foundTask) {
-    tasks = tasks.filter((task) => task.id !== +foundTask);
-    res.status(204).end();
-  } else {
-    res.status(404).json({ message: "Task not found" });
-  }
-});
+app.use("/tasks", taskRoutes);
 
 app.listen(8000, () => {
   console.log("The app is running on localhost:8000");
